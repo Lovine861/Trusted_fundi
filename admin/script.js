@@ -23,6 +23,13 @@ let fundis = [
 // Load fundis into admin dashboard
 function loadFundis() {
     let container = document.getElementById("fundi-list");
+
+    // If no fundis left
+    if (fundis.length === 0) {
+        container.innerHTML = "<h2>No pending fundi requests</h2>";
+        return;
+    }
+
     container.innerHTML = "";
 
     fundis.forEach((fundi, index) => {
@@ -49,15 +56,17 @@ function loadFundis() {
     });
 }
 
- function approve(index) {
+// Approve fundi
+function approve(index) {
     alert(fundis[index].name + " Approved");
-    fundis.splice(index, 1); // remove from list
+    fundis.splice(index, 1);
     loadFundis();
 }
 
+// Reject fundi
 function reject(index) {
     alert(fundis[index].name + " Rejected");
-    fundis.splice(index, 1); // remove from list
+    fundis.splice(index, 1);
     loadFundis();
 }
 
