@@ -1,29 +1,87 @@
 body {
-    font-family: Arial;
-    background-color: #f4f4f4;
-    text-align: center;
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    margin: 0;
+    padding: 0;
 }
 
-h1 {
+/* container */
+.container {
+    width: 80%;
+    margin: 40px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* headings */
+h1, h2, h3 {
+    color: #333;
+}
+
+/* buttons / links */
+a {
+    text-decoration: none;
+    color: white;
+    background: #007bff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    margin-right: 5px;
+    display: inline-block;
+}
+
+a:hover {
+    background: #0056b3;
+}
+
+/* table */
+table {
+    width: 100%;
+    border-collapse: collapse;
     margin-top: 20px;
 }
 
-.card {
-    background: white;
-    padding: 15px;
-    margin: 15px auto;
-    width: 320px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px #ccc;
+table, th, td {
+    border: 1px solid #ddd;
 }
 
-img {
-    margin: 5px;
+th {
+    background: #007bff;
+    color: white;
+    padding: 10px;
+}
+
+td {
+    padding: 10px;
+}
+
+/* form */
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
     border-radius: 5px;
 }
 
 button {
-    margin: 5px;
-    padding: 8px 12px;
+    background: #28a745;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
 }
+
+button:hover {
+    background: #218838;
+}
+
+/* logout link special */
+.logout {
+    background: red;
+}
+.logout:hover {
+    background: darkred;
+} 
