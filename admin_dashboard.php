@@ -3,10 +3,20 @@ include "session.php";
 include "db.php";
 
 // allow only admin
-if ($_SESSION['role'] != "admin") {
+if (!is_admin_session()) {
     header("Location: login.php");
     exit();
 }
+
+// counts (CHANGE 'users' if your table name is different)
+$total = mysqli_query($conn, "SELECT COUNT(*) as total FROM users");
+$total_users = mysqli_fetch_assoc($total)['total'];
+
+$approved = mysqli_query($conn, "SELECT COUNT(*) as total FROM users WHERE status='approved'");
+$approved_users = mysqli_fetch_assoc($approved)['total'];
+
+$pending = mysqli_query($conn, "SELECT COUNT(*) as total FROM users WHERE status='pending'");
+$pending_users = mysqli_fetch_assoc($pending)['total'];
 ?>
 
 <!DOCTYPE html>
@@ -25,6 +35,14 @@ if ($_SESSION['role'] != "admin") {
     <p>Welcome, <?php echo $_SESSION['email']; ?></p>
 
     <hr>
+
+    <h3>System Overview</h3>
+
+<p>Total Users: <?php echo $total_users; ?></p>
+<p>Approved Users: <?php echo $approved_users; ?></p>
+<p>Pending Users: <?php echo $pending_users; ?></p>
+
+<hr>
 
     <h3>Admin Controls</h3>
 
