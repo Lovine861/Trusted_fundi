@@ -1,0 +1,21 @@
+ <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+echo "START<br>";
+
+include "send_email.php";
+
+echo "LOADED<br>";
+
+$sent = sendEmail(
+    "muemalovine6@gmail.com",
+    "Test Email",
+    "Testing email from Trusted Fundi"
+);
+
+if ($sent) {
+    echo "SUCCESS";
+} else {
+    echo "FAILED";
+}

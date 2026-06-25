@@ -1,0 +1,148 @@
+[2026-06-23 16:17:57] Email skipped to lovinemuema@strathmore.edu: SMTP disabled
+[2026-06-23 16:22:39] Email skipped to mutisobaraka2@gmail.com: SMTP disabled
+[2026-06-23 16:35:25] Email skipped to muemabaraka22@gmail.com: SMTP credentials missing or still placeholders
+[2026-06-24 15:53:16] Email failed to muemabaraka22@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c60ee6a85sm680832166b.43 - gsmtp), php mail fallback failed
+[2026-06-24 15:53:20] Email failed to muemabaraka22@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5e498ce1sm655147266b.3 - gsmtp), php mail fallback failed
+[2026-06-24 15:53:24] Email failed to muemabaraka22@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5ef8eb38sm661523766b.28 - gsmtp), php mail fallback failed
+[2026-06-24 15:53:28] Email failed to muemabaraka22@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c61610b2esm683347066b.57 - gsmtp), php mail fallback failed
+[2026-06-24 15:53:32] Email failed to muemabaraka22@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c610e5280sm676736566b.53 - gsmtp), php mail fallback failed
+[2026-06-24 15:53:36] Email failed to muemabaraka22@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f4bd38b4sm1173995a12.28 - gsmtp), php mail fallback failed
+[2026-06-24 15:56:51] Email failed to muemabaraka22@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5b304722sm656416066b.0 - gsmtp), php mail fallback failed
+[2026-06-24 15:57:27] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5e497fc3sm662726566b.8 - gsmtp), php mail fallback failed
+[2026-06-24 15:57:31] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5e99b968sm661673766b.24 - gsmtp), php mail fallback failed
+[2026-06-24 15:57:35] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f3ac477fsm1315271a12.2 - gsmtp), php mail fallback failed
+[2026-06-24 15:57:39] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5e998d90sm679354066b.17 - gsmtp), php mail fallback failed
+[2026-06-24 15:57:43] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f4bc8016sm1223862a12.25 - gsmtp), php mail fallback failed
+[2026-06-24 15:57:46] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f46e0ab4sm1248063a12.18 - gsmtp), php mail fallback failed
+[2026-06-24 15:57:50] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5e99978asm663555966b.21 - gsmtp), php mail fallback failed
+[2026-06-24 15:57:54] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f4bc8016sm1224347a12.25 - gsmtp), php mail fallback failed
+[2026-06-24 15:57:58] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5e998ebfsm673412066b.16 - gsmtp), php mail fallback failed
+[2026-06-24 15:58:01] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f46e159bsm1199143a12.19 - gsmtp), php mail fallback failed
+[2026-06-24 15:58:40] Email skipped for user #113: no email
+[2026-06-24 15:58:47] Email skipped for user #113: no email
+[2026-06-24 16:00:36] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f4bd7719sm1229453a12.30 - gsmtp), php mail fallback failed
+[2026-06-24 16:00:39] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c616175c2sm662471166b.61 - gsmtp), php mail fallback failed
+[2026-06-24 16:00:43] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c615089desm690543466b.54 - gsmtp), php mail fallback failed
+[2026-06-24 16:00:47] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5e4a14d4sm666850866b.7 - gsmtp), php mail fallback failed
+[2026-06-24 16:00:51] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f3ae5a6csm1211452a12.9 - gsmtp), php mail fallback failed
+[2026-06-24 16:00:55] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f49d73fdsm1208097a12.22 - gsmtp), php mail fallback failed
+[2026-06-24 16:00:59] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5e49aa07sm670292066b.10 - gsmtp), php mail fallback failed
+[2026-06-24 16:01:03] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5b304722sm657464066b.0 - gsmtp), php mail fallback failed
+[2026-06-24 16:01:06] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f4bd44d0sm1188905a12.29 - gsmtp), php mail fallback failed
+[2026-06-24 16:01:11] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c61617677sm689516566b.60 - gsmtp), php mail fallback failed
+[2026-06-24 16:01:15] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c610e5275sm658114666b.45 - gsmtp), php mail fallback failed
+[2026-06-24 16:01:23] Email failed to muemabaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5ef8acaesm668408366b.27 - gsmtp), php mail fallback failed
+[2026-06-24 16:01:27] Email failed to muemabaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5e49a759sm671265866b.6 - gsmtp), php mail fallback failed
+[2026-06-24 16:01:31] Email failed to muemabaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c60aca46csm665438866b.36 - gsmtp), php mail fallback failed
+[2026-06-24 16:01:35] Email failed to muemabaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c60bbf2c3sm675484566b.35 - gsmtp), php mail fallback failed
+[2026-06-24 16:09:29] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c61617677sm691924366b.60 - gsmtp), php mail fallback failed
+[2026-06-24 16:09:33] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f47d5a35sm1210145a12.17 - gsmtp), php mail fallback failed
+[2026-06-24 16:09:37] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5e497e7dsm666628166b.5 - gsmtp), php mail fallback failed
+[2026-06-24 16:09:40] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5e99e1aasm652977766b.25 - gsmtp), php mail fallback failed
+[2026-06-24 16:09:44] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c60ac98c9sm664073866b.29 - gsmtp), php mail fallback failed
+[2026-06-24 16:09:48] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c616175c2sm664974866b.61 - gsmtp), php mail fallback failed
+[2026-06-24 16:09:52] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f3aeb509sm1248299a12.10 - gsmtp), php mail fallback failed
+[2026-06-24 16:09:55] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5e99bd0bsm670000966b.23 - gsmtp), php mail fallback failed
+[2026-06-24 16:09:59] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f46e15b1sm1251956a12.16 - gsmtp), php mail fallback failed
+[2026-06-24 16:10:03] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c610e526asm663623566b.51 - gsmtp), php mail fallback failed
+[2026-06-24 16:10:07] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c610e4192sm676008166b.44 - gsmtp), php mail fallback failed
+[2026-06-24 16:12:00] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5e998ebfsm677466266b.16 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:12:03] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5e998dcbsm672611066b.18 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:12:07] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5eaa64c8sm684451566b.26 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:25:07] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c610e12f6sm705859166b.47 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:25:11] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f46e15besm1272337a12.15 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:25:15] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f4bda11csm1437855a12.31 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:25:18] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5e998decsm671249066b.22 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:27:34] Email failed to lovinemuema@strathmore.edu: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f4bd38b4sm1245923a12.28 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:27:42] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c5e49a9fbsm676297366b.12 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:27:45] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f3ade18esm1286609a12.7 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:54:45] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c11fbba677csm247866b.11 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:54:48] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f4bc6aeasm1346476a12.24 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:54:51] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c60bbf2c3sm684263466b.35 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:54:55] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c11f8985b8bsm36114766b.46 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:56:58] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f3aeb509sm1318416a12.10 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:57:04] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c11f1008b05sm87711566b.40 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:57:08] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c11fbc2c6a9sm127466b.28 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:57:11] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f4bd36adsm1348020a12.27 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:57:14] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c11fbbe9f9asm252566b.26 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:57:18] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c60bbf2b3sm676469566b.39 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:58:32] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials 4fb4d7f45d1cf-697f4bd36adsm1349461a12.27 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:58:35] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c0c61610b2esm694602366b.57 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 16:58:38] Email failed to mutisobaraka2@gmail.com: SMTP failed (SMTP password rejected: 535-5.7.8 Username and Password not accepted. For more information, go to
+535 5.7.8  https://support.google.com/mail/?p=BadCredentials a640c23a62f3a-c1002d6c5f6sm324987366b.49 - gsmtp), smtp_user=trustedfundi.notifications@gmail.com, from=trustedfundi.notifications@gmail.com, php mail fallback failed
+[2026-06-24 18:01:17] Email sent to david.otieno@gmail.com subject=Welcome to Trusted Fundi
+[2026-06-24 18:07:51] Email sent to lovinemuema@strathmore.edu subject=Booking Request Status Update
+[2026-06-24 18:11:18] Email sent to lovinemuema@strathmore.edu subject=Test Notification Email
+[2026-06-24 18:11:22] Email sent to lovinemuema@strathmore.edu subject=Test Notification Email
+[2026-06-24 18:11:26] Email sent to lovinemuema@strathmore.edu subject=Test Notification Email
+[2026-06-24 18:11:30] Email sent to lovinemuema@strathmore.edu subject=Test Notification Email
+[2026-06-24 18:11:34] Email sent to mutisobaraka2@gmail.com subject=Test Notification Email
+[2026-06-24 18:11:38] Email sent to mutisobaraka2@gmail.com subject=Test Notification Email
+[2026-06-24 18:11:40] Email sent to mutisobaraka2@gmail.com subject=Test Notification Email
+[2026-06-24 18:11:43] Email sent to mutisobaraka2@gmail.com subject=Test Notification Email
+[2026-06-24 18:11:45] Email sent to mutisobaraka2@gmail.com subject=Test Notification Email
