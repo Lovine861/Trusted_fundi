@@ -149,7 +149,7 @@ $pending_fundis = mysqli_fetch_assoc($pending)['total'];
     <a href="view_complaints.php">⚠️ Complaints</a>
     <a href="view_reviews.php">⭐ Reviews</a>
     <a href="../add_user.php">➕ Add User</a>
-    <a href="test_email_notification.php">📧 Test Email</a>
+    <a href="../change_password.php">🔐 Change Password</a>
     <a href="../logout.php">🚪 Logout</a>
 </div>
 

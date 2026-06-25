@@ -92,6 +92,8 @@ body{
 
     <a href="notifications.php">🔔 Notifications</a>
 
+    <a href="../change_password.php">🔐 Change Password</a>
+
     <a href="../logout.php">🚪 Logout</a>
 
 </div>

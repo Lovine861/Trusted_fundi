@@ -42,42 +42,50 @@ if ($bookingId <= 0 || $status === '') {
     if ($fundiProfileId <= 0) {
         $message = 'Fundi profile not found.';
     } else {
-        $stmt = $conn->prepare("UPDATE bookings SET status = ? WHERE id = ? AND fundi_id = ?");
-        if ($stmt) {
-            $stmt->bind_param("sii", $status, $bookingId, $fundiProfileId);
-            if ($stmt->execute()) {
-                if ($stmt->affected_rows > 0) {
-                    $ok = true;
-                    $message = 'Booking updated successfully.';
+        $bookingCheckStmt = $conn->prepare("SELECT status, client_id FROM bookings WHERE id = ? AND fundi_id = ? LIMIT 1");
+        if ($bookingCheckStmt) {
+            $bookingCheckStmt->bind_param("ii", $bookingId, $fundiProfileId);
+            $bookingCheckStmt->execute();
+            $bookingCheckResult = $bookingCheckStmt->get_result();
+            $bookingRow = $bookingCheckResult ? $bookingCheckResult->fetch_assoc() : null;
+            $bookingCheckStmt->close();
 
-                    $clientId = 0;
-                    $bookingInfoStmt = $conn->prepare("SELECT client_id FROM bookings WHERE id = ? LIMIT 1");
-                    if ($bookingInfoStmt) {
-                        $bookingInfoStmt->bind_param("i", $bookingId);
-                        $bookingInfoStmt->execute();
-                        $bookingInfoResult = $bookingInfoStmt->get_result();
-                        $bookingInfo = $bookingInfoResult ? $bookingInfoResult->fetch_assoc() : null;
-                        if ($bookingInfo) {
-                            $clientId = (int) $bookingInfo['client_id'];
-                        }
-                        $bookingInfoStmt->close();
-                    }
-
-                    if ($clientId > 0) {
-                        $fundiName = (string) ($_SESSION['fullname'] ?? 'Your fundi');
-                        $statusText = $status === 'accepted' ? 'accepted' : 'rejected';
-                        $note = $fundiName . ' has ' . $statusText . ' your booking request.';
-                        send_notification_with_email($conn, $clientId, $note, 'Booking Request Status Update');
-                    }
-                } else {
-                    $message = 'No matching booking found for your account.';
-                }
+            if (!$bookingRow) {
+                $message = 'No matching booking found for your account.';
             } else {
-                $message = 'Update failed: ' . $conn->error;
+                $currentStatus = strtolower((string) ($bookingRow['status'] ?? ''));
+
+                if ($currentStatus === $status) {
+                    $ok = true;
+                    $message = $status === 'accepted'
+                        ? 'This booking is already accepted.'
+                        : 'This booking is already rejected.';
+                } else {
+                    $stmt = $conn->prepare("UPDATE bookings SET status = ? WHERE id = ? AND fundi_id = ?");
+                    if ($stmt) {
+                        $stmt->bind_param("sii", $status, $bookingId, $fundiProfileId);
+                        if ($stmt->execute()) {
+                            $ok = true;
+                            $message = 'Booking updated successfully.';
+
+                            $clientId = (int) ($bookingRow['client_id'] ?? 0);
+                            if ($clientId > 0) {
+                                $fundiName = (string) ($_SESSION['fullname'] ?? 'Your fundi');
+                                $statusText = $status === 'accepted' ? 'accepted' : 'rejected';
+                                $note = $fundiName . ' has ' . $statusText . ' your booking request.';
+                                send_notification_with_email($conn, $clientId, $note, 'Booking Request Status Update');
+                            }
+                        } else {
+                            $message = 'Update failed: ' . $conn->error;
+                        }
+                        $stmt->close();
+                    } else {
+                        $message = 'Could not prepare update request.';
+                    }
+                }
             }
-            $stmt->close();
         } else {
-            $message = 'Could not prepare update request.';
+            $message = 'Could not validate booking ownership.';
         }
     }
 }

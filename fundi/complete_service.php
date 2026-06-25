@@ -32,22 +32,40 @@ if ($bookingId <= 0) {
     if ($fundiProfileId <= 0) {
         $message = 'Fundi profile not found.';
     } else {
-        $stmt = $conn->prepare("UPDATE bookings SET status = 'completed' WHERE id = ? AND fundi_id = ?");
-        if ($stmt) {
-            $stmt->bind_param("ii", $bookingId, $fundiProfileId);
-            if ($stmt->execute()) {
-                if ($stmt->affected_rows > 0) {
-                    $ok = true;
-                    $message = 'Service marked as completed.';
-                } else {
-                    $message = 'No matching booking found for your account.';
-                }
+        $bookingCheckStmt = $conn->prepare("SELECT status FROM bookings WHERE id = ? AND fundi_id = ? LIMIT 1");
+        if ($bookingCheckStmt) {
+            $bookingCheckStmt->bind_param("ii", $bookingId, $fundiProfileId);
+            $bookingCheckStmt->execute();
+            $bookingCheckResult = $bookingCheckStmt->get_result();
+            $bookingRow = $bookingCheckResult ? $bookingCheckResult->fetch_assoc() : null;
+            $bookingCheckStmt->close();
+
+            if (!$bookingRow) {
+                $message = 'No matching booking found for your account.';
             } else {
-                $message = 'Update failed: ' . $conn->error;
+                $currentStatus = strtolower((string) ($bookingRow['status'] ?? ''));
+
+                if ($currentStatus === 'completed') {
+                    $ok = true;
+                    $message = 'This service is already marked as completed.';
+                } else {
+                    $stmt = $conn->prepare("UPDATE bookings SET status = 'completed' WHERE id = ? AND fundi_id = ?");
+                    if ($stmt) {
+                        $stmt->bind_param("ii", $bookingId, $fundiProfileId);
+                        if ($stmt->execute()) {
+                            $ok = true;
+                            $message = 'Service marked as completed.';
+                        } else {
+                            $message = 'Update failed: ' . $conn->error;
+                        }
+                        $stmt->close();
+                    } else {
+                        $message = 'Could not prepare update request.';
+                    }
+                }
             }
-            $stmt->close();
         } else {
-            $message = 'Could not prepare update request.';
+            $message = 'Could not validate booking ownership.';
         }
     }
 }

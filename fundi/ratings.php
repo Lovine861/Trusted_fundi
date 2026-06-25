@@ -8,8 +8,26 @@ if ($currentRole !== 'fundi') {
 	exit();
 }
 
-$fundiId = (int) $_SESSION['user_id'];
+$fundiUserId = (int) $_SESSION['user_id'];
+$fundiId = 0;
 $errorMessage = "";
+
+$profileStmt = $conn->prepare("SELECT id FROM fundis WHERE user_id = ? LIMIT 1");
+if ($profileStmt) {
+	$profileStmt->bind_param("i", $fundiUserId);
+	$profileStmt->execute();
+	$profileResult = $profileStmt->get_result();
+	$profileRow = $profileResult ? $profileResult->fetch_assoc() : null;
+	if ($profileRow) {
+		$fundiId = (int) $profileRow['id'];
+	}
+	$profileStmt->close();
+}
+
+if ($fundiId <= 0) {
+	$errorMessage = "Fundi profile not found. Ratings cannot be loaded.";
+}
+
 
 $stmt = $conn->prepare(
 	"SELECT id, review, rating, created_at
@@ -19,7 +37,7 @@ $stmt = $conn->prepare(
 );
 
 $result = false;
-if ($stmt) {
+if ($stmt && $errorMessage === "") {
 	$stmt->bind_param("i", $fundiId);
 	if ($stmt->execute()) {
 		$result = $stmt->get_result();

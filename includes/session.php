@@ -5,7 +5,8 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../login.php");
+    $appBasePath = '/' . basename(dirname(__DIR__));
+    header("Location: {$appBasePath}/login.php");
     exit();
 }
 

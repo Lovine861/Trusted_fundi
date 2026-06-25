@@ -180,6 +180,7 @@ if ($statsStmt) {
         <a href="view_requests.php">📋 Service Requests</a>
         <a href="notifications.php">🔔 Notifications</a>
         <a href="ratings.php">⭐ Ratings</a>
+        <a href="../change_password.php">🔐 Change Password</a>
         <a href="../logout.php">🚪 Logout</a>
     </div>
 

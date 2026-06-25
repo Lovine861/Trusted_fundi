@@ -143,12 +143,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-size:14px;
         }
 
-        input{
+        input[type="email"],
+        input[type="password"],
+        input[type="text"]{
             width:100%;
             padding:12px;
             border:1px solid #d8cec3;
             border-radius:8px;
             font-size:14px;
+        }
+
+        .show-pass{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            margin:8px 0 6px;
+            color:#5c4b43;
+            font-weight:normal;
+            font-size:14px;
+        }
+
+        .show-pass input[type="checkbox"]{
+            width:auto;
+            margin:0;
+            padding:0;
+            border:none;
+            accent-color:#5c4b43;
         }
 
         button{
@@ -207,6 +227,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <label for="password">Password</label>
                 <input id="password" type="password" name="password" placeholder="Enter password" required>
+                <label class="show-pass">
+                    <input type="checkbox" onclick="togglePassword()">
+                    Show Password
+                </label>
 
                 <button type="submit">Login</button>
             </form>
@@ -214,7 +238,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <p class="foot">
                 New user? <a href="register.php">Create account</a>
             </p>
+            <p>
+                <a href="forgot_password.php">Forgot Password?</a>
+            </p>
         </div>
     </div>
+
+    <script>
+        function togglePassword() {
+            var passwordField = document.getElementById("password");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+            } else {
+                passwordField.type = "password";
+            }
+        }
+    </script>
 </body>
 </html>
