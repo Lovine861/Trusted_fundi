@@ -19,6 +19,7 @@ if (!in_array($next, $allowedNext, true)) {
 $allowedStatus = ['pending', 'approved', 'rejected'];
 $updated = false;
 $changed = false;
+$documentsComplete = true;
 
 if ($id <= 0 || !in_array($status, $allowedStatus, true)) {
     header("Location: " . $next);
@@ -42,6 +43,29 @@ if ($roleStmt) {
 
 if ($role !== 'fundi') {
     header("Location: " . $next);
+    exit();
+}
+
+if ($status === 'approved') {
+    $docStmt = $conn->prepare("SELECT id_document, certificate_document, cv_document FROM fundis WHERE user_id = ? LIMIT 1");
+    if ($docStmt) {
+        $docStmt->bind_param("i", $id);
+        $docStmt->execute();
+        $docResult = $docStmt->get_result();
+        $fundiDocs = $docResult ? $docResult->fetch_assoc() : null;
+        $docStmt->close();
+
+        $documentsComplete = !empty($fundiDocs['id_document'])
+            && !empty($fundiDocs['certificate_document'])
+            && !empty($fundiDocs['cv_document']);
+    } else {
+        $documentsComplete = false;
+    }
+}
+
+if ($status === 'approved' && !$documentsComplete) {
+    $redirectTarget = $next . (strpos($next, '?') === false ? '?' : '&') . 'message=missing_documents';
+    header("Location: " . $redirectTarget);
     exit();
 }
 

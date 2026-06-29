@@ -20,14 +20,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $role = strtolower(trim($_POST['role'] ?? 'client'));
     $serviceCategory = trim($_POST['service_category'] ?? 'General Service');
     $location = trim($_POST['location'] ?? 'Not set');
+    $uploadDir = __DIR__ . '/uploads/fundi_documents/';
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
+    }
 
     $allowedRoles = ['client', 'fundi'];
     if (!in_array($role, $allowedRoles, true)) {
         $role = 'client';
     }
 
+    $requiredDocumentsPresent = true;
+    $documentPaths = [];
+
+    if ($role === 'fundi') {
+        $documentFields = [
+            'id_document' => 'ID document',
+            'certificate_document' => 'certificate',
+            'cv_document' => 'CV'
+        ];
+
+        foreach ($documentFields as $field => $label) {
+            if (!isset($_FILES[$field]) || $_FILES[$field]['error'] !== UPLOAD_ERR_OK || empty($_FILES[$field]['name'])) {
+                $requiredDocumentsPresent = false;
+                $message = 'Please upload your ' . $label . ' before submitting your fundi registration.';
+                $messageType = 'error';
+                break;
+            }
+
+            $tmpName = $_FILES[$field]['tmp_name'];
+            $originalName = basename($_FILES[$field]['name']);
+            $safeName = time() . '_' . preg_replace('/[^A-Za-z0-9._-]/', '_', $originalName);
+            $targetPath = $uploadDir . $safeName;
+
+            if (!move_uploaded_file($tmpName, $targetPath)) {
+                $requiredDocumentsPresent = false;
+                $message = 'There was a problem uploading your ' . $label . '.';
+                $messageType = 'error';
+                break;
+            }
+
+            $documentPaths[$field] = 'uploads/fundi_documents/' . $safeName;
+        }
+    }
+
     if ($fullname === '' || $email === '' || $password === '') {
         $message = 'Please fill in all required fields.';
+        $messageType = 'error';
+    } elseif ($role === 'fundi' && !$requiredDocumentsPresent) {
+        $message = $message !== '' ? $message : 'Please upload the required fundi documents.';
         $messageType = 'error';
     } else {
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
@@ -47,16 +88,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 if ($role === 'fundi') {
                     $fundiStmt = $conn->prepare(
-                        "INSERT INTO fundis (user_id, service_category, location, verification_status)
-                         VALUES (?, ?, ?, 'pending')
+                        "INSERT INTO fundis (user_id, service_category, location, verification_status, id_document, certificate_document, cv_document, face_verification_status)
+                         VALUES (?, ?, ?, 'pending', ?, ?, ?, 'pending')
                          ON DUPLICATE KEY UPDATE
                             service_category = VALUES(service_category),
                             location = VALUES(location),
-                            verification_status = 'pending'"
+                            verification_status = 'pending',
+                            id_document = VALUES(id_document),
+                            certificate_document = VALUES(certificate_document),
+                            cv_document = VALUES(cv_document),
+                            face_verification_status = 'pending'"
                     );
 
                     if ($fundiStmt) {
-                        $fundiStmt->bind_param("iss", $newUserId, $serviceCategory, $location);
+                        $fundiStmt->bind_param("isssss", $newUserId, $serviceCategory, $location, $documentPaths['id_document'] ?? null, $documentPaths['certificate_document'] ?? null, $documentPaths['cv_document'] ?? null);
                         $fundiStmt->execute();
                         $fundiStmt->close();
                     }
@@ -252,6 +297,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color:#7a6d63;
         }
 
+        .fundi-only-box{
+            display:none;
+            margin-bottom:12px;
+            padding:12px;
+            border:1px dashed #d8cec3;
+            border-radius:10px;
+            background:#fcf8f4;
+        }
+
+        .fundi-only-box .upload-label{
+            display:block;
+            margin-bottom:6px;
+            font-size:13px;
+            font-weight:bold;
+            color:#5c4b43;
+        }
+
         .foot{
             margin-top:14px;
             font-size:14px;
@@ -286,7 +348,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             <?php endif; ?>
 
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 <input type="text" name="fullname" placeholder="Full Name" required>
 
                 <input type="email" name="email" placeholder="Email Address" required>
@@ -308,6 +370,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <input type="text" name="location" placeholder="Location (only for fundi)">
 
+                <div id="fundi-docs" class="fundi-only-box">
+                    <p class="hint" style="margin-bottom:8px;"><strong>Fundi only:</strong> Upload your ID, certificate, and CV for fundi approval.</p>
+                    <label class="upload-label" for="id_document">ID document</label>
+                    <input id="id_document" type="file" name="id_document" accept=".pdf,.jpg,.jpeg,.png" style="margin-bottom:10px;">
+                    <label class="upload-label" for="certificate_document">Certificate document</label>
+                    <input id="certificate_document" type="file" name="certificate_document" accept=".pdf,.jpg,.jpeg,.png" style="margin-bottom:10px;">
+                    <label class="upload-label" for="cv_document">CV</label>
+                    <input id="cv_document" type="file" name="cv_document" accept=".pdf,.doc,.docx" style="margin-bottom:10px;">
+                    <p class="hint">Face recognition will be added later.</p>
+                </div>
+
                 <button type="submit" name="register">Register</button>
             </form>
 
@@ -327,6 +400,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             passwordField.type = "password";
         }
+    }
+
+    var roleSelect = document.getElementById('role');
+    var fundiDocs = document.getElementById('fundi-docs');
+    var docInputs = fundiDocs ? fundiDocs.querySelectorAll('input[type="file"]') : [];
+
+    function toggleFundiDocs() {
+        if (roleSelect && fundiDocs) {
+            var isFundi = roleSelect.value === 'fundi';
+            fundiDocs.style.display = isFundi ? 'block' : 'none';
+            if (!isFundi) {
+                docInputs.forEach(function(input) {
+                    input.value = '';
+                });
+            }
+        }
+    }
+
+    if (roleSelect) {
+        roleSelect.addEventListener('change', toggleFundiDocs);
+        toggleFundiDocs();
     }
 </script>
 

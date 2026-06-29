@@ -56,6 +56,10 @@ CREATE TABLE IF NOT EXISTS fundis (
     service_category VARCHAR(100) DEFAULT 'General Service',
     location VARCHAR(120) DEFAULT 'Not set',
     verification_status VARCHAR(20) DEFAULT 'pending',
+    id_document VARCHAR(255) DEFAULT NULL,
+    certificate_document VARCHAR(255) DEFAULT NULL,
+    cv_document VARCHAR(255) DEFAULT NULL,
+    face_verification_status VARCHAR(20) DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY uniq_fundi_user (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
@@ -78,6 +82,26 @@ if ($checkFundiUnique && $checkFundiUnique->num_rows === 0) {
     $conn->query("ALTER TABLE fundis ADD UNIQUE KEY uniq_fundi_user (user_id)");
 }
 
+$checkFundiIdDoc = $conn->query("SHOW COLUMNS FROM fundis LIKE 'id_document'");
+if ($checkFundiIdDoc && $checkFundiIdDoc->num_rows === 0) {
+    $conn->query("ALTER TABLE fundis ADD COLUMN id_document VARCHAR(255) DEFAULT NULL AFTER verification_status");
+}
+
+$checkFundiCert = $conn->query("SHOW COLUMNS FROM fundis LIKE 'certificate_document'");
+if ($checkFundiCert && $checkFundiCert->num_rows === 0) {
+    $conn->query("ALTER TABLE fundis ADD COLUMN certificate_document VARCHAR(255) DEFAULT NULL AFTER id_document");
+}
+
+$checkFundiCv = $conn->query("SHOW COLUMNS FROM fundis LIKE 'cv_document'");
+if ($checkFundiCv && $checkFundiCv->num_rows === 0) {
+    $conn->query("ALTER TABLE fundis ADD COLUMN cv_document VARCHAR(255) DEFAULT NULL AFTER certificate_document");
+}
+
+$checkFaceVerification = $conn->query("SHOW COLUMNS FROM fundis LIKE 'face_verification_status'");
+if ($checkFaceVerification && $checkFaceVerification->num_rows === 0) {
+    $conn->query("ALTER TABLE fundis ADD COLUMN face_verification_status VARCHAR(20) DEFAULT 'pending' AFTER cv_document");
+}
+
 $syncApprovedFundisSql = "
 INSERT INTO fundis (user_id, service_category, location, verification_status)
 SELECT users.id, 'General Service', 'Not set', 'verified'
@@ -95,6 +119,8 @@ CREATE TABLE IF NOT EXISTS bookings (
     client_id INT NOT NULL,
     fundi_id INT NOT NULL,
     booking_date DATE NOT NULL,
+    service_name VARCHAR(150) NULL,
+    amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     status VARCHAR(20) NOT NULL DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_booking_client (client_id),
@@ -104,6 +130,40 @@ CREATE TABLE IF NOT EXISTS bookings (
 
 if (!$conn->query($createBookingsTable)) {
     die("Bookings table setup failed: " . $conn->error);
+}
+
+$checkBookingServiceName = $conn->query("SHOW COLUMNS FROM bookings LIKE 'service_name'");
+if ($checkBookingServiceName && $checkBookingServiceName->num_rows === 0) {
+    $conn->query("ALTER TABLE bookings ADD COLUMN service_name VARCHAR(150) NULL AFTER booking_date");
+}
+
+$checkBookingAmount = $conn->query("SHOW COLUMNS FROM bookings LIKE 'amount'");
+if ($checkBookingAmount && $checkBookingAmount->num_rows === 0) {
+    $conn->query("ALTER TABLE bookings ADD COLUMN amount DECIMAL(10,2) NOT NULL DEFAULT 0.00 AFTER service_name");
+}
+
+$createPaymentsTable = "
+CREATE TABLE IF NOT EXISTS payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    booking_id INT NOT NULL,
+    fundi_id INT NULL,
+    amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    phone VARCHAR(15) NOT NULL,
+    transaction_status VARCHAR(20) NOT NULL DEFAULT 'pending',
+    checkout_request_id VARCHAR(100) NULL,
+    mpesa_receipt VARCHAR(100) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_payment_booking (booking_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+";
+
+if (!$conn->query($createPaymentsTable)) {
+    die("Payments table setup failed: " . $conn->error);
+}
+
+$checkPaymentFundiId = $conn->query("SHOW COLUMNS FROM payments LIKE 'fundi_id'");
+if ($checkPaymentFundiId && $checkPaymentFundiId->num_rows === 0) {
+    $conn->query("ALTER TABLE payments ADD COLUMN fundi_id INT NULL AFTER booking_id");
 }
 
 $createReviewsTable = "

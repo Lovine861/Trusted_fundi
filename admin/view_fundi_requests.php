@@ -14,7 +14,11 @@ $sql = "SELECT users.id,
                users.phone,
                users.status,
                COALESCE(fundis.service_category, 'General Service') AS service_category,
-               COALESCE(fundis.location, 'Not set') AS location
+               COALESCE(fundis.location, 'Not set') AS location,
+               COALESCE(fundis.id_document, '') AS id_document,
+               COALESCE(fundis.certificate_document, '') AS certificate_document,
+               COALESCE(fundis.cv_document, '') AS cv_document,
+               COALESCE(fundis.face_verification_status, 'pending') AS face_verification_status
         FROM users
         LEFT JOIN fundis ON fundis.user_id = users.id
         WHERE LOWER(users.role) = 'fundi'
@@ -24,6 +28,14 @@ $sql = "SELECT users.id,
 $result = mysqli_query($conn, $sql);
 if (!$result) {
     die("Could not load fundi requests: " . mysqli_error($conn));
+}
+
+$message = '';
+$messageType = 'error';
+if (isset($_GET['message'])) {
+    if ($_GET['message'] === 'missing_documents') {
+        $message = 'This fundi cannot be approved until ID, certificate, and CV are uploaded.';
+    }
 }
 ?>
 
@@ -49,6 +61,12 @@ if (!$result) {
         <div class="top"><a href="admin_dashboard.php">⬅️ Back to Dashboard</a></div>
         <h2>Pending Fundi Requests</h2>
 
+        <?php if ($message !== ''): ?>
+            <div style="padding:10px 12px; margin-bottom:12px; border-radius:8px; background:#fbe8e8; color:#8f2b2b;">
+                <?php echo htmlspecialchars($message); ?>
+            </div>
+        <?php endif; ?>
+
         <table>
             <tr>
                 <th>ID</th>
@@ -57,6 +75,7 @@ if (!$result) {
                 <th>Phone</th>
                 <th>Service</th>
                 <th>Location</th>
+                <th>Documents</th>
                 <th>Status</th>
                 <th>Action</th>
             </tr>
@@ -70,6 +89,12 @@ if (!$result) {
                         <td><?php echo htmlspecialchars((string) $row['phone']); ?></td>
                         <td><?php echo htmlspecialchars((string) $row['service_category']); ?></td>
                         <td><?php echo htmlspecialchars((string) $row['location']); ?></td>
+                        <td>
+                            <?php if (!empty($row['id_document'])): ?><div>✓ ID</div><?php endif; ?>
+                            <?php if (!empty($row['certificate_document'])): ?><div>✓ Certificate</div><?php endif; ?>
+                            <?php if (!empty($row['cv_document'])): ?><div>✓ CV</div><?php endif; ?>
+                            <?php if (empty($row['id_document']) || empty($row['certificate_document']) || empty($row['cv_document'])): ?><div>⚠ Missing</div><?php endif; ?>
+                        </td>
                         <td><?php echo htmlspecialchars((string) $row['status']); ?></td>
                         <td>
                             <a class="approve" href="update_user_status.php?id=<?php echo (int) $row['id']; ?>&status=approved&next=view_fundi_requests.php">✅ Accept</a>
@@ -80,7 +105,7 @@ if (!$result) {
                 <?php endwhile; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="8">No pending fundi requests found.</td>
+                    <td colspan="9">No pending fundi requests found.</td>
                 </tr>
             <?php endif; ?>
         </table>

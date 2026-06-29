@@ -59,13 +59,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $fundi) {
         $message = "Please choose a booking date.";
         $messageType = "error";
     } else {
+        $serviceName = trim((string) ($fundi['service_category'] ?? 'General Service'));
+        $amount = 0.00;
+
         $insertStmt = $conn->prepare(
-            "INSERT INTO bookings (client_id, fundi_id, booking_date, status)
-             VALUES (?, ?, ?, 'pending')"
+            "INSERT INTO bookings (client_id, fundi_id, booking_date, service_name, amount, status)
+             VALUES (?, ?, ?, ?, ?, 'pending')"
         );
 
         if ($insertStmt) {
-            $insertStmt->bind_param("iis", $clientId, $fundiId, $bookingDate);
+            $insertStmt->bind_param("iissd", $clientId, $fundiId, $bookingDate, $serviceName, $amount);
 
             if ($insertStmt->execute()) {
                 $message = "Booking submitted successfully.";

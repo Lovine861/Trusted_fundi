@@ -1,4 +1,4 @@
-<?php
+ <?php
 require_once __DIR__ . "/../includes/session.php";
 
 $currentRole = strtolower(trim((string) ($_SESSION['role'] ?? '')));
@@ -85,6 +85,9 @@ body{
     <a href="services.php">🔍 Search Fundi</a>
 
     <a href="my bookings.php">📋 My Bookings</a>
+
+    <!-- PAYMENT ADDED HERE -->
+    <a href="payment.php">💳 Payment</a>
 
     <a href="reviews.php">⭐ Reviews</a>
 

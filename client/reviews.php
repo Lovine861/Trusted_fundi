@@ -18,12 +18,37 @@ $bookingsStmt = $conn->prepare(
             bookings.booking_date,
             bookings.status,
             COALESCE(users.fullname, 'Fundi') AS fundi_name,
-            COALESCE(fundis.service_category, 'General Service') AS service_category
+            COALESCE(fundis.service_category, 'General Service') AS service_category,
+            COALESCE(
+                (SELECT p.transaction_status
+                 FROM payments p
+                 WHERE p.booking_id = bookings.id
+                 ORDER BY p.id DESC
+                 LIMIT 1),
+                ''
+            ) AS latest_payment_status
      FROM bookings
      LEFT JOIN fundis ON fundis.id = bookings.fundi_id
      LEFT JOIN users ON users.id = fundis.user_id
-    WHERE bookings.client_id = ?
-      AND LOWER(COALESCE(bookings.status, 'pending')) = 'completed'
+     WHERE bookings.client_id = ?
+       AND NOT EXISTS (
+           SELECT 1
+           FROM reviews r
+           WHERE r.client_id = bookings.client_id
+             AND r.booking_id = bookings.id
+       )
+       AND (
+           LOWER(COALESCE(bookings.status, 'pending')) = 'completed'
+           OR LOWER(COALESCE(bookings.status, 'pending')) = 'paid'
+           OR LOWER(COALESCE(
+               (SELECT p.transaction_status
+                FROM payments p
+                WHERE p.booking_id = bookings.id
+                ORDER BY p.id DESC
+                LIMIT 1),
+               ''
+           )) = 'success'
+       )
      ORDER BY bookings.id DESC"
 );
 
@@ -55,7 +80,18 @@ if(isset($_POST['review'])){
                          FROM bookings
                          WHERE id = ?
                              AND client_id = ?
-                             AND LOWER(COALESCE(status, 'pending')) = 'completed'
+                             AND (
+                                 LOWER(COALESCE(status, 'pending')) = 'completed'
+                                 OR LOWER(COALESCE(status, 'pending')) = 'paid'
+                                 OR LOWER(COALESCE(
+                                     (SELECT p.transaction_status
+                                      FROM payments p
+                                      WHERE p.booking_id = bookings.id
+                                      ORDER BY p.id DESC
+                                      LIMIT 1),
+                                     ''
+                                 )) = 'success'
+                             )
                          LIMIT 1"
                 );
         if ($bookingStmt) {
@@ -66,26 +102,45 @@ if(isset($_POST['review'])){
             $bookingStmt->close();
 
             if (!$booking) {
-                $message = "Only completed bookings can be reviewed.";
+                $message = "Only completed, paid, or successfully paid bookings can be reviewed.";
                 $messageType = "error";
             } else {
-                $fundiId = (int) $booking['fundi_id'];
-                $insertStmt = $conn->prepare("INSERT INTO reviews (client_id, fundi_id, review, rating) VALUES (?, ?, ?, ?)");
-                if ($insertStmt) {
-                    $insertStmt->bind_param("iisi", $clientId, $fundiId, $review, $rating);
+                $existingReviewStmt = $conn->prepare(
+                    "SELECT id FROM reviews WHERE client_id = ? AND booking_id = ? LIMIT 1"
+                );
+                if ($existingReviewStmt) {
+                    $existingReviewStmt->bind_param("ii", $clientId, $bookingId);
+                    $existingReviewStmt->execute();
+                    $existingReviewResult = $existingReviewStmt->get_result();
+                    $existingReview = $existingReviewResult ? $existingReviewResult->fetch_assoc() : null;
+                    $existingReviewStmt->close();
 
-                    if ($insertStmt->execute()) {
-                        $newReviewId = (int) $insertStmt->insert_id;
-                        $message = "Review submitted successfully. Reference ID: #" . $newReviewId;
-                        $messageType = "success";
-                    } else {
-                        $message = "Failed to submit review: " . $conn->error;
+                    if ($existingReview) {
+                        $message = "You have already reviewed this booking.";
                         $messageType = "error";
-                    }
+                    } else {
+                        $fundiId = (int) $booking['fundi_id'];
+                        $insertStmt = $conn->prepare("INSERT INTO reviews (client_id, fundi_id, booking_id, review, rating) VALUES (?, ?, ?, ?, ?)");
+                        if ($insertStmt) {
+                            $insertStmt->bind_param("iiisi", $clientId, $fundiId, $bookingId, $review, $rating);
 
-                    $insertStmt->close();
+                            if ($insertStmt->execute()) {
+                                $newReviewId = (int) $insertStmt->insert_id;
+                                $message = "Review submitted successfully. Reference ID: #" . $newReviewId;
+                                $messageType = "success";
+                            } else {
+                                $message = "Failed to submit review: " . $conn->error;
+                                $messageType = "error";
+                            }
+
+                            $insertStmt->close();
+                        } else {
+                            $message = "Could not prepare review request: " . $conn->error;
+                            $messageType = "error";
+                        }
+                    }
                 } else {
-                    $message = "Could not prepare review request: " . $conn->error;
+                    $message = "Could not validate previous reviews.";
                     $messageType = "error";
                 }
             }
@@ -178,7 +233,7 @@ a{
 <div class="container">
 
 <h2>Leave a Review</h2>
-<p>Only completed bookings appear in the list below.</p>
+<p>Completed, paid, or successfully paid bookings appear in the list below.</p>
 
 <?php if ($message !== ""): ?>
     <div class="msg <?php echo htmlspecialchars($messageType); ?>">
@@ -213,7 +268,7 @@ Submit Review
 </form>
 
 <?php if (count($bookings) === 0): ?>
-    <p>No completed bookings found yet. Complete a job first, then submit a review.</p>
+    <p>No completed or paid bookings found yet. Complete a job or finish a payment first, then submit a review.</p>
 <?php endif; ?>
 
 <br>
