@@ -146,6 +146,7 @@ $pending_fundis = mysqli_fetch_assoc($pending)['total'];
     <h2>ADMIN</h2>
     <a href="view_users.php">👥 Users</a>
     <a href="view_fundi_requests.php">🛠️ Fundi Requests</a>
+    <a href="verification_requests.php">🗂️ Verification</a>
     <a href="view_complaints.php">⚠️ Complaints</a>
     <a href="view_reviews.php">⭐ Reviews</a>
     <a href="../add_user.php">➕ Add User</a>
@@ -180,6 +181,7 @@ $pending_fundis = mysqli_fetch_assoc($pending)['total'];
         <div class="quick-links">
             <a href="view_users.php">👥 View Users</a>
             <a href="view_fundi_requests.php">🛠️ Review Fundi Requests</a>
+            <a href="verification_requests.php">🗂️ Verification Queue</a>
             <a href="view_complaints.php">⚠️ Open Complaints</a>
             <a href="view_reviews.php">⭐ View Reviews</a>
         </div>

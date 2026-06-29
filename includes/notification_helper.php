@@ -58,6 +58,26 @@ function normalize_smtp_password($value)
     return preg_replace('/\s+/', '', $value);
 }
 
+function sanitize_mail_header_value($value)
+{
+    // Prevent header injection and keep header values single-line.
+    return trim(str_replace(["\r", "\n"], '', (string) $value));
+}
+
+function build_message_id($fromEmail)
+{
+    $domain = 'localhost.localdomain';
+    if (strpos($fromEmail, '@') !== false) {
+        $parts = explode('@', $fromEmail);
+        $candidate = trim((string) end($parts));
+        if ($candidate !== '') {
+            $domain = $candidate;
+        }
+    }
+
+    return sprintf('<%s.%s@%s>', time(), bin2hex(random_bytes(6)), $domain);
+}
+
 function smtp_send_mail_message($config, $toEmail, $subject, $body)
 {
     $host = trim((string) ($config['host'] ?? ''));
@@ -69,6 +89,11 @@ function smtp_send_mail_message($config, $toEmail, $subject, $body)
     $fromEmail = normalize_smtp_value($config['from_email'] ?? $username);
     $fromName = trim((string) ($config['from_name'] ?? 'Trusted Fundi'));
     $timeout = (int) ($config['timeout'] ?? 20);
+
+    $fromEmail = sanitize_mail_header_value($fromEmail);
+    $fromName = sanitize_mail_header_value($fromName);
+    $toEmail = sanitize_mail_header_value($toEmail);
+    $subject = sanitize_mail_header_value($subject);
 
     if ($host === '' || $port <= 0 || $fromEmail === '') {
         return [false, 'SMTP config incomplete'];
@@ -92,7 +117,15 @@ function smtp_send_mail_message($config, $toEmail, $subject, $body)
         return [false, 'Greeting failed: ' . trim($resp)];
     }
 
-    list($ok, $resp) = smtp_command($socket, 'EHLO trusted-fundi.local', [250]);
+    $ehloHost = 'localhost.localdomain';
+    if (strpos($fromEmail, '@') !== false) {
+        $domainPart = trim((string) substr($fromEmail, strpos($fromEmail, '@') + 1));
+        if ($domainPart !== '') {
+            $ehloHost = $domainPart;
+        }
+    }
+
+    list($ok, $resp) = smtp_command($socket, 'EHLO ' . $ehloHost, [250]);
     if (!$ok) {
         fclose($socket);
         return [false, 'EHLO failed: ' . trim($resp)];
@@ -110,7 +143,7 @@ function smtp_send_mail_message($config, $toEmail, $subject, $body)
             return [false, 'TLS negotiation failed'];
         }
 
-        list($ok, $resp) = smtp_command($socket, 'EHLO trusted-fundi.local', [250]);
+        list($ok, $resp) = smtp_command($socket, 'EHLO ' . $ehloHost, [250]);
         if (!$ok) {
             fclose($socket);
             return [false, 'EHLO after TLS failed: ' . trim($resp)];
@@ -158,11 +191,18 @@ function smtp_send_mail_message($config, $toEmail, $subject, $body)
     $headers = [];
     $headers[] = 'From: ' . $fromName . ' <' . $fromEmail . '>';
     $headers[] = 'To: <' . $toEmail . '>';
+    $headers[] = 'Reply-To: ' . $fromName . ' <' . $fromEmail . '>';
     $headers[] = 'Subject: ' . $subject;
+    $headers[] = 'Date: ' . date(DATE_RFC2822);
+    $headers[] = 'Message-ID: ' . build_message_id($fromEmail);
     $headers[] = 'MIME-Version: 1.0';
     $headers[] = 'Content-Type: text/plain; charset=UTF-8';
+    $headers[] = 'Content-Transfer-Encoding: 8bit';
+    $headers[] = 'X-Mailer: TrustedFundiMailer/1.0';
 
-    $payload = implode("\r\n", $headers) . "\r\n\r\n" . $body . "\r\n.";
+    // SMTP DATA must escape lines beginning with a dot.
+    $safeBody = preg_replace('/(^|\r\n)\./', '$1..', (string) $body);
+    $payload = implode("\r\n", $headers) . "\r\n\r\n" . $safeBody . "\r\n.";
     fwrite($socket, $payload . "\r\n");
 
     list($ok, $resp) = smtp_expect($socket, [250]);
@@ -178,10 +218,19 @@ function smtp_send_mail_message($config, $toEmail, $subject, $body)
 
 function php_mail_fallback_send($fromEmail, $fromName, $toEmail, $subject, $body)
 {
+    $fromEmail = sanitize_mail_header_value($fromEmail);
+    $fromName = sanitize_mail_header_value($fromName);
+    $toEmail = sanitize_mail_header_value($toEmail);
+    $subject = sanitize_mail_header_value($subject);
+
     $headers = "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+    $headers .= "Date: " . date(DATE_RFC2822) . "\r\n";
+    $headers .= "Message-ID: " . build_message_id($fromEmail) . "\r\n";
+    $headers .= "X-Mailer: TrustedFundiMailer/1.0\r\n";
     if ($fromEmail !== '') {
         $headers .= "From: " . $fromName . " <" . $fromEmail . ">\r\n";
+        $headers .= "Reply-To: " . $fromName . " <" . $fromEmail . ">\r\n";
     }
 
     $sent = @mail($toEmail, $subject, $body, $headers);

@@ -101,7 +101,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     );
 
                     if ($fundiStmt) {
-                        $fundiStmt->bind_param("isssss", $newUserId, $serviceCategory, $location, $documentPaths['id_document'] ?? null, $documentPaths['certificate_document'] ?? null, $documentPaths['cv_document'] ?? null);
+                        $idDocumentPath = isset($documentPaths['id_document']) ? $documentPaths['id_document'] : null;
+                        $certificateDocumentPath = isset($documentPaths['certificate_document']) ? $documentPaths['certificate_document'] : null;
+                        $cvDocumentPath = isset($documentPaths['cv_document']) ? $documentPaths['cv_document'] : null;
+
+                        $fundiStmt->bind_param("isssss", $newUserId, $serviceCategory, $location, $idDocumentPath, $certificateDocumentPath, $cvDocumentPath);
                         $fundiStmt->execute();
                         $fundiStmt->close();
                     }
@@ -261,34 +265,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-weight:bold;
         }
 
-        .password-wrap{
-            position:relative;
-        }
-
         .password-wrap input{
-            padding-right:44px;
             margin-bottom:8px;
         }
 
-        .toggle-pass{
-            position:absolute;
-            right:10px;
-            top:50%;
-            transform:translateY(-50%);
-            border:none;
-            background:transparent;
-            width:auto;
-            padding:0;
-            margin:0;
-            color:#7a6d63;
-            font-size:18px;
-            cursor:pointer;
-            line-height:1;
+        .show-pass{
+            display:flex;
+            align-items:center;
+            gap:8px;
+            margin:8px 0 6px;
+            color:#5c4b43;
+            font-weight:normal;
+            font-size:14px;
         }
 
-        .toggle-pass:hover{
-            background:transparent;
-            color:#5c4b43;
+        .show-pass input[type="checkbox"]{
+            width:auto;
+            margin:0;
+            padding:0;
+            border:none;
+            accent-color:#5c4b43;
         }
 
         .hint{
@@ -357,8 +353,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="password-wrap">
                     <input id="password" type="password" name="password" placeholder="Minimum 8 chars, uppercase, lowercase and number" required>
-                    <button class="toggle-pass" type="button" onclick="togglePassword()" aria-label="Show or hide password">&#128065;</button>
                 </div>
+                <label class="show-pass">
+                    <input type="checkbox" onclick="togglePassword(this)">
+                    Show Password
+                </label>
                 <p class="hint">Use at least 8 characters, uppercase, lowercase, and a number.</p>
 
                 <select name="role" id="role" required>
@@ -393,9 +392,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <script>
-    function togglePassword() {
+    function togglePassword(checkbox) {
         var passwordField = document.getElementById("password");
-        if (passwordField.type === "password") {
+        if (checkbox && checkbox.checked) {
             passwordField.type = "text";
         } else {
             passwordField.type = "password";

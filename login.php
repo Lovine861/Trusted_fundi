@@ -9,7 +9,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
     $password = $_POST['password'];
 
-    $stmt = $conn->prepare("SELECT id, fullname, email, password, role, status FROM users WHERE email = ? LIMIT 1");
+    $stmt = $conn->prepare(
+        "SELECT users.id,
+                users.fullname,
+                users.email,
+                users.password,
+                users.role,
+                users.status,
+                fundis.admin_comment
+         FROM users
+         LEFT JOIN fundis ON fundis.user_id = users.id
+         WHERE users.email = ?
+         LIMIT 1"
+    );
 
     if ($stmt) {
         $stmt->bind_param("s", $email);
@@ -24,7 +36,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Only fundi accounts require admin approval before login.
             if ($role === "fundi" && $status !== "approved") {
                 if ($status === "rejected") {
-                    $message = "Your fundi account was rejected by admin.";
+                    $adminComment = trim((string) ($user['admin_comment'] ?? ''));
+                    if ($adminComment !== '') {
+                        $message = "Your fundi account was rejected by admin. Reason: " . $adminComment;
+                    } else {
+                        $message = "Your fundi account was rejected by admin.";
+                    }
                 } else {
                     $message = "Your fundi account is pending admin approval.";
                 }

@@ -59,6 +59,8 @@ CREATE TABLE IF NOT EXISTS fundis (
     id_document VARCHAR(255) DEFAULT NULL,
     certificate_document VARCHAR(255) DEFAULT NULL,
     cv_document VARCHAR(255) DEFAULT NULL,
+    admin_comment TEXT DEFAULT NULL,
+    verification_updated_at TIMESTAMP NULL DEFAULT NULL,
     face_verification_status VARCHAR(20) DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY uniq_fundi_user (user_id)
@@ -95,6 +97,16 @@ if ($checkFundiCert && $checkFundiCert->num_rows === 0) {
 $checkFundiCv = $conn->query("SHOW COLUMNS FROM fundis LIKE 'cv_document'");
 if ($checkFundiCv && $checkFundiCv->num_rows === 0) {
     $conn->query("ALTER TABLE fundis ADD COLUMN cv_document VARCHAR(255) DEFAULT NULL AFTER certificate_document");
+}
+
+$checkFundiAdminComment = $conn->query("SHOW COLUMNS FROM fundis LIKE 'admin_comment'");
+if ($checkFundiAdminComment && $checkFundiAdminComment->num_rows === 0) {
+    $conn->query("ALTER TABLE fundis ADD COLUMN admin_comment TEXT DEFAULT NULL AFTER cv_document");
+}
+
+$checkVerificationUpdatedAt = $conn->query("SHOW COLUMNS FROM fundis LIKE 'verification_updated_at'");
+if ($checkVerificationUpdatedAt && $checkVerificationUpdatedAt->num_rows === 0) {
+    $conn->query("ALTER TABLE fundis ADD COLUMN verification_updated_at TIMESTAMP NULL DEFAULT NULL AFTER admin_comment");
 }
 
 $checkFaceVerification = $conn->query("SHOW COLUMNS FROM fundis LIKE 'face_verification_status'");
