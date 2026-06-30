@@ -31,11 +31,17 @@ if (!$result) {
 }
 
 $message = '';
+$messageClass = 'success';
 if (isset($_GET['message'])) {
     if ($_GET['message'] === 'updated') {
         $message = 'Verification status updated successfully.';
+        $messageClass = 'success';
+    } elseif ($_GET['message'] === 'reason_required') {
+        $message = 'Please provide a reason before rejecting a verification request.';
+        $messageClass = 'error';
     } elseif ($_GET['message'] === 'error') {
         $message = 'Could not update verification status.';
+        $messageClass = 'error';
     }
 }
 ?>
@@ -54,7 +60,9 @@ if (isset($_GET['message'])) {
         table { border-collapse: collapse; width: 100%; }
         th, td { border-bottom: 1px solid #eee; padding: 12px; text-align: left; vertical-align: top; }
         th { background: #5c4b43; color: #fff; }
-        .msg { margin-bottom: 12px; border-radius: 8px; padding: 10px 12px; background: #e8f7ee; color: #1f7a3f; }
+        .msg { margin-bottom: 12px; border-radius: 8px; padding: 10px 12px; }
+        .msg.success { background: #e8f7ee; color: #1f7a3f; }
+        .msg.error { background: #fce8e8; color: #9f2d2d; }
         .link { color: #146c63; text-decoration: none; font-weight: bold; }
         .btn { border: none; border-radius: 8px; padding: 8px 10px; cursor: pointer; color: #fff; }
         .approve { background: #1f7a3f; }
@@ -86,7 +94,7 @@ if (isset($_GET['message'])) {
         <p>Review uploaded fundi documents and approve or reject verification.</p>
 
         <?php if ($message !== ''): ?>
-            <div class="msg"><?php echo htmlspecialchars($message); ?></div>
+            <div class="msg <?php echo htmlspecialchars($messageClass); ?>"><?php echo htmlspecialchars($message); ?></div>
         <?php endif; ?>
 
         <table>

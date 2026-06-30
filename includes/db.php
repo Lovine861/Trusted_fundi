@@ -99,6 +99,34 @@ if ($checkFundiCv && $checkFundiCv->num_rows === 0) {
     $conn->query("ALTER TABLE fundis ADD COLUMN cv_document VARCHAR(255) DEFAULT NULL AFTER certificate_document");
 }
 
+$checkLegacyNationalId = $conn->query("SHOW COLUMNS FROM fundis LIKE 'national_id'");
+$checkLegacyCertificate = $conn->query("SHOW COLUMNS FROM fundis LIKE 'certificate'");
+$checkLegacyPhoto = $conn->query("SHOW COLUMNS FROM fundis LIKE 'photo'");
+
+if ($checkLegacyNationalId && $checkLegacyNationalId->num_rows > 0) {
+    $conn->query(
+        "UPDATE fundis
+         SET id_document = COALESCE(NULLIF(id_document, ''), NULLIF(national_id, ''))
+         WHERE COALESCE(NULLIF(id_document, ''), '') = ''"
+    );
+}
+
+if ($checkLegacyCertificate && $checkLegacyCertificate->num_rows > 0) {
+    $conn->query(
+        "UPDATE fundis
+         SET certificate_document = COALESCE(NULLIF(certificate_document, ''), NULLIF(certificate, ''))
+         WHERE COALESCE(NULLIF(certificate_document, ''), '') = ''"
+    );
+}
+
+if ($checkLegacyPhoto && $checkLegacyPhoto->num_rows > 0) {
+    $conn->query(
+        "UPDATE fundis
+         SET cv_document = COALESCE(NULLIF(cv_document, ''), NULLIF(photo, ''))
+         WHERE COALESCE(NULLIF(cv_document, ''), '') = ''"
+    );
+}
+
 $checkFundiAdminComment = $conn->query("SHOW COLUMNS FROM fundis LIKE 'admin_comment'");
 if ($checkFundiAdminComment && $checkFundiAdminComment->num_rows === 0) {
     $conn->query("ALTER TABLE fundis ADD COLUMN admin_comment TEXT DEFAULT NULL AFTER cv_document");
@@ -133,6 +161,8 @@ CREATE TABLE IF NOT EXISTS bookings (
     booking_date DATE NOT NULL,
     service_name VARCHAR(150) NULL,
     amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    price_offer_amount DECIMAL(10,2) NULL,
+    price_offer_by VARCHAR(20) NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_booking_client (client_id),
@@ -152,6 +182,16 @@ if ($checkBookingServiceName && $checkBookingServiceName->num_rows === 0) {
 $checkBookingAmount = $conn->query("SHOW COLUMNS FROM bookings LIKE 'amount'");
 if ($checkBookingAmount && $checkBookingAmount->num_rows === 0) {
     $conn->query("ALTER TABLE bookings ADD COLUMN amount DECIMAL(10,2) NOT NULL DEFAULT 0.00 AFTER service_name");
+}
+
+$checkBookingPriceOfferAmount = $conn->query("SHOW COLUMNS FROM bookings LIKE 'price_offer_amount'");
+if ($checkBookingPriceOfferAmount && $checkBookingPriceOfferAmount->num_rows === 0) {
+    $conn->query("ALTER TABLE bookings ADD COLUMN price_offer_amount DECIMAL(10,2) NULL AFTER amount");
+}
+
+$checkBookingPriceOfferBy = $conn->query("SHOW COLUMNS FROM bookings LIKE 'price_offer_by'");
+if ($checkBookingPriceOfferBy && $checkBookingPriceOfferBy->num_rows === 0) {
+    $conn->query("ALTER TABLE bookings ADD COLUMN price_offer_by VARCHAR(20) NULL AFTER price_offer_amount");
 }
 
 $createPaymentsTable = "

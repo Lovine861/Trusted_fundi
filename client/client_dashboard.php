@@ -87,7 +87,7 @@ body{
     <a href="my bookings.php">📋 My Bookings</a>
 
     <!-- PAYMENT ADDED HERE -->
-    <a href="payment.php">💳 Payment</a>
+    <a href="my bookings.php">💳 Price & Payment</a>
 
     <a href="reviews.php">⭐ Reviews</a>
 

@@ -15,6 +15,8 @@ $stmt = $conn->prepare(
     "SELECT b.*, 
             COALESCE(NULLIF(b.service_name, ''), COALESCE(f.service_category, 'Service not set')) AS service_name,
             COALESCE(b.amount, 0) AS amount,
+            COALESCE(b.price_offer_amount, 0) AS price_offer_amount,
+            COALESCE(b.price_offer_by, '') AS price_offer_by,
             COALESCE(
                 (SELECT p.transaction_status
                  FROM payments p
@@ -142,6 +144,9 @@ body{
                 <b>Agreed price:</b>
                 <?php if (!empty($row['amount']) && (float) $row['amount'] > 0): ?>
                     KES <?php echo htmlspecialchars((string) number_format((float) $row['amount'], 2)); ?>
+                <?php elseif (!empty($row['price_offer_amount']) && (float) $row['price_offer_amount'] > 0): ?>
+                    <span style="color:#7a6d63;">Offer pending: KES <?php echo htmlspecialchars((string) number_format((float) $row['price_offer_amount'], 2)); ?>
+                    (<?php echo strtolower((string) ($row['price_offer_by'] ?? '')) === 'fundi' ? 'from fundi' : 'your counter offer'; ?>)</span>
                 <?php else: ?>
                     <span style="color:#a94442;">Waiting for fundi to agree the price</span>
                 <?php endif; ?>
@@ -170,6 +175,11 @@ body{
                 <a class="btn"
                    href="payment.php?booking_id=<?php echo (int)$row['id']; ?>">
                     Pay Now
+                </a>
+            <?php elseif (!empty($row['price_offer_amount']) && (float) $row['price_offer_amount'] > 0): ?>
+                <a class="btn"
+                   href="payment.php?booking_id=<?php echo (int)$row['id']; ?>">
+                    Review Offer
                 </a>
             <?php else: ?>
                 <p style="color:#a94442; margin-top:10px;">Waiting for the fundi to agree the price.</p>

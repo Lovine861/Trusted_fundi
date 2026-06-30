@@ -66,16 +66,38 @@ foreach ($targetDirs as $fieldName => $meta) {
     $savedPaths[$meta['db']] = $relativePath;
 }
 
-$updateSql = "UPDATE fundis
-              SET id_document = ?,
-                  certificate_document = ?,
-                  cv_document = ?,
-                  verification_status = 'pending',
-                  admin_comment = NULL,
-                  verification_updated_at = CURRENT_TIMESTAMP
-              WHERE user_id = ?";
+$upsertSql = "INSERT INTO fundis (
+                    user_id,
+                    service_category,
+                    location,
+                    verification_status,
+                    id_document,
+                    certificate_document,
+                    cv_document,
+                    admin_comment,
+                    verification_updated_at,
+                    face_verification_status
+                ) VALUES (
+                    ?,
+                    'General Service',
+                    'Not set',
+                    'pending',
+                    ?,
+                    ?,
+                    ?,
+                    NULL,
+                    CURRENT_TIMESTAMP,
+                    'pending'
+                )
+                ON DUPLICATE KEY UPDATE
+                    id_document = VALUES(id_document),
+                    certificate_document = VALUES(certificate_document),
+                    cv_document = VALUES(cv_document),
+                    verification_status = 'pending',
+                    admin_comment = NULL,
+                    verification_updated_at = CURRENT_TIMESTAMP";
 
-$updateStmt = $conn->prepare($updateSql);
+$updateStmt = $conn->prepare($upsertSql);
 if (!$updateStmt) {
     header('Location: upload_documents.php?status=error');
     exit();
@@ -84,7 +106,7 @@ if (!$updateStmt) {
 $idPath = $savedPaths['id_document'] ?? null;
 $certPath = $savedPaths['certificate_document'] ?? null;
 $cvPath = $savedPaths['cv_document'] ?? null;
-$updateStmt->bind_param('sssi', $idPath, $certPath, $cvPath, $fundiUserId);
+$updateStmt->bind_param('isss', $fundiUserId, $idPath, $certPath, $cvPath);
 $ok = $updateStmt->execute();
 $updateStmt->close();
 

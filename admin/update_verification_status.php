@@ -24,7 +24,7 @@ if ($userId <= 0 || !in_array($decision, ['verified', 'rejected'], true)) {
 }
 
 if ($decision === 'rejected' && $adminComment === '') {
-    header('Location: verification_requests.php?message=error');
+    header('Location: verification_requests.php?message=reason_required');
     exit();
 }
 

@@ -27,14 +27,22 @@ $profileStmt->close();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_price'])) {
     $bookingId = (int) ($_POST['booking_id'] ?? 0);
-    $agreedAmount = (float) ($_POST['amount'] ?? 0);
+    $offeredAmount = (float) ($_POST['amount'] ?? 0);
 
-    if ($bookingId > 0 && $fundiProfileId > 0 && $agreedAmount > 0) {
-        $updateStmt = $conn->prepare("UPDATE bookings SET amount = ? WHERE id = ? AND fundi_id = ?");
+    if ($bookingId > 0 && $fundiProfileId > 0 && $offeredAmount > 0) {
+        $updateStmt = $conn->prepare(
+            "UPDATE bookings
+             SET amount = 0,
+                 price_offer_amount = ?,
+                 price_offer_by = 'fundi'
+             WHERE id = ?
+               AND fundi_id = ?
+               AND LOWER(COALESCE(status, 'pending')) NOT IN ('paid', 'cancelled')"
+        );
         if ($updateStmt) {
-            $updateStmt->bind_param("dii", $agreedAmount, $bookingId, $fundiProfileId);
+            $updateStmt->bind_param("dii", $offeredAmount, $bookingId, $fundiProfileId);
             if ($updateStmt->execute()) {
-                $message = 'Price agreed and saved successfully.';
+                $message = 'Price offer sent to client successfully.';
                 $messageType = 'success';
 
                 $clientStmt = $conn->prepare("SELECT client_id FROM bookings WHERE id = ? LIMIT 1");
@@ -49,15 +57,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_price'])) {
                             send_notification_with_email(
                                 $conn,
                                 $clientId,
-                                'The fundi has agreed a price of KES ' . number_format($agreedAmount, 2) . ' for your service. Please review it before paying.',
-                                'Price agreed for your booking'
+                                'Your fundi offered a price of KES ' . number_format($offeredAmount, 2) . '. You can agree or send a counter offer from your payment page.',
+                                'New price offer from fundi'
                             );
                         }
                     }
                     $clientStmt->close();
                 }
             } else {
-                $message = 'Unable to save the agreed price.';
+                $message = 'Unable to send the price offer.';
                 $messageType = 'error';
             }
             $updateStmt->close();
@@ -66,8 +74,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_price'])) {
             $messageType = 'error';
         }
     } else {
-        $message = 'Please enter a valid price before saving.';
+        $message = 'Please enter a valid price before sending the offer.';
         $messageType = 'error';
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accept_client_offer'])) {
+    $bookingId = (int) ($_POST['booking_id'] ?? 0);
+
+    if ($bookingId > 0 && $fundiProfileId > 0) {
+        $acceptStmt = $conn->prepare(
+            "UPDATE bookings
+             SET amount = price_offer_amount,
+                 price_offer_amount = NULL,
+                 price_offer_by = NULL
+             WHERE id = ?
+               AND fundi_id = ?
+               AND COALESCE(price_offer_amount, 0) > 0
+               AND LOWER(COALESCE(price_offer_by, '')) = 'client'"
+        );
+
+        if ($acceptStmt) {
+            $acceptStmt->bind_param("ii", $bookingId, $fundiProfileId);
+            if ($acceptStmt->execute() && $acceptStmt->affected_rows > 0) {
+                $message = 'Client offer accepted. Price is now agreed.';
+                $messageType = 'success';
+
+                $clientStmt = $conn->prepare("SELECT client_id, amount FROM bookings WHERE id = ? LIMIT 1");
+                if ($clientStmt) {
+                    $clientStmt->bind_param("i", $bookingId);
+                    $clientStmt->execute();
+                    $clientResult = $clientStmt->get_result();
+                    $clientRow = $clientResult ? $clientResult->fetch_assoc() : null;
+                    if ($clientRow) {
+                        $clientId = (int) ($clientRow['client_id'] ?? 0);
+                        $agreedAmount = (float) ($clientRow['amount'] ?? 0);
+                        if ($clientId > 0 && $agreedAmount > 0) {
+                            send_notification_with_email(
+                                $conn,
+                                $clientId,
+                                'Your price offer was accepted. Final agreed price is KES ' . number_format($agreedAmount, 2) . '.',
+                                'Price offer accepted'
+                            );
+                        }
+                    }
+                    $clientStmt->close();
+                }
+            } else {
+                $message = 'Unable to accept client offer at the moment.';
+                $messageType = 'error';
+            }
+            $acceptStmt->close();
+        } else {
+            $message = 'Unable to process offer acceptance.';
+            $messageType = 'error';
+        }
     }
 }
 
@@ -89,6 +150,8 @@ $stmt = $conn->prepare(
             b.status,
             COALESCE(NULLIF(TRIM(b.service_name), ''), COALESCE(NULLIF(TRIM(f.service_category), ''), 'Service not set')) AS service_name,
             b.amount,
+            b.price_offer_amount,
+            b.price_offer_by,
             u.fullname AS client_name
      FROM bookings b
      LEFT JOIN users u ON u.id = b.client_id
@@ -287,15 +350,31 @@ if ($stmt) {
                     <!-- PRICE -->
                     <td>
                         <?php if (!empty($row['amount']) && (float) $row['amount'] > 0): ?>
-                            <?php echo htmlspecialchars((string) number_format((float) $row['amount'], 2)); ?>
+                            <strong>KES <?php echo htmlspecialchars((string) number_format((float) $row['amount'], 2)); ?></strong>
+                            <div class="muted" style="margin-top:6px; font-size:12px;">Final agreed price</div>
+                        <?php elseif (!empty($row['price_offer_amount']) && (float) $row['price_offer_amount'] > 0): ?>
+                            <strong>KES <?php echo htmlspecialchars((string) number_format((float) $row['price_offer_amount'], 2)); ?></strong>
+                            <div class="muted" style="margin-top:6px; font-size:12px;">
+                                Pending <?php echo strtolower((string) ($row['price_offer_by'] ?? '')) === 'client' ? 'client counter offer' : 'fundi offer'; ?>
+                            </div>
                         <?php else: ?>
                             <span class="muted">Pending agreement</span>
                         <?php endif; ?>
-                        <form class="price-form" method="POST">
-                            <input type="hidden" name="booking_id" value="<?= (int) $row['id'] ?>">
-                            <input type="number" name="amount" step="0.01" min="0.01" placeholder="Enter agreed price" required>
-                            <button type="submit" name="save_price">Agree Price</button>
-                        </form>
+                        <?php if (strtolower((string) ($row['status'] ?? '')) !== 'completed' && strtolower((string) ($row['status'] ?? '')) !== 'paid'): ?>
+                            <form class="price-form" method="POST">
+                                <input type="hidden" name="booking_id" value="<?= (int) $row['id'] ?>">
+                                <input type="number" name="amount" step="0.01" min="0.01" placeholder="Set agreed price" required>
+                                <button type="submit" name="save_price"><?php echo (strtolower((string) ($row['price_offer_by'] ?? '')) === 'client') ? 'Counter Offer' : (((float) ($row['amount'] ?? 0) > 0) ? 'Update Price' : 'Send Offer'); ?></button>
+                            </form>
+                            <?php if (strtolower((string) ($row['price_offer_by'] ?? '')) === 'client' && (float) ($row['price_offer_amount'] ?? 0) > 0): ?>
+                                <form class="price-form" method="POST" style="margin-top:4px;">
+                                    <input type="hidden" name="booking_id" value="<?= (int) $row['id'] ?>">
+                                    <button type="submit" name="accept_client_offer">Accept Client Offer</button>
+                                </form>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <div class="muted" style="margin-top:6px; font-size:12px;">Price locked after completion.</div>
+                        <?php endif; ?>
                     </td>
 
                     <!-- DATE -->

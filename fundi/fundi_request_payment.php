@@ -12,6 +12,8 @@ $booking_id = (int) ($_GET['booking_id'] ?? 0);
 $fundiUserId = (int) ($_SESSION['user_id'] ?? 0);
 $message = '';
 $messageType = '';
+$formPhone = '';
+$formAmount = '';
 
 $fundiProfileId = 0;
 
@@ -55,6 +57,9 @@ if (!$booking) {
     die("Booking not found.");
 }
 
+$formPhone = (string) ($booking['phone'] ?? '');
+$formAmount = (string) ($booking['amount'] ?? '');
+
 if (strtolower(trim((string) ($booking['status'] ?? ''))) !== 'completed') {
     die("❌ Service not completed yet.");
 }
@@ -65,8 +70,11 @@ if ((float) ($booking['amount'] ?? 0) <= 0) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $submittedBookingId = (int) ($_POST['booking_id'] ?? 0);
-    $submittedAmount = (float) ($_POST['amount'] ?? 0);
-    $submittedPhone = preg_replace('/\D+/', '', trim((string) ($_POST['phone'] ?? '')));
+    $submittedPhoneRaw = trim((string) ($_POST['phone'] ?? ''));
+    $submittedPhone = preg_replace('/\D+/', '', $submittedPhoneRaw);
+    $formPhone = $submittedPhoneRaw;
+    $submittedAmount = (float) ($booking['amount'] ?? 0);
+    $formAmount = (string) ($booking['amount'] ?? '');
 
     if ($submittedBookingId === $booking_id && $submittedAmount > 0 && strlen($submittedPhone) >= 10) {
         $updateBookingStmt = $conn->prepare("UPDATE bookings SET amount = ? WHERE id = ? AND fundi_id = ?");
@@ -255,16 +263,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="text" value="<?= htmlspecialchars((string) ($booking['fullname'] ?? '')) ?>" readonly>
 
                     <label>Phone</label>
-                    <input type="text" name="phone" value="<?= htmlspecialchars((string) ($booking['phone'] ?? '')) ?>" readonly>
+                    <input type="text" name="phone" value="<?= htmlspecialchars((string) $formPhone) ?>" placeholder="Enter phone (e.g. 07XXXXXXXX or 2547XXXXXXXX)" required>
 
                     <label>Service</label>
                     <input type="text" value="<?= htmlspecialchars((string) ($booking['service_name'] ?: 'Service not set')) ?>" readonly>
 
                     <label>Amount (KES)</label>
-                    <input type="number" name="amount" step="0.01" min="0.01" value="<?= htmlspecialchars((string) ($booking['amount'] ?? '')) ?>" placeholder="Enter the agreed amount" required>
+                    <input type="number" name="amount" step="0.01" min="0.01" value="<?= htmlspecialchars((string) number_format((float) $formAmount, 2, '.', '')) ?>" readonly>
 
                     <button type="submit">Send Payment Request</button>
-                    <div class="hint">This submits a payment request for the completed booking.</div>
+                    <div class="hint">Amount is locked to the agreed price. To change it, go back to Service Requests and update the agreed price first.</div>
                 </form>
             <?php endif; ?>
         </div>

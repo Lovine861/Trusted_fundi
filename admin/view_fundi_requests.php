@@ -9,21 +9,22 @@ if (!is_admin_session()) {
 }
 
 $sql = "SELECT users.id,
-               users.fullname,
-               users.email,
-               users.phone,
-               users.status,
-               COALESCE(fundis.service_category, 'General Service') AS service_category,
-               COALESCE(fundis.location, 'Not set') AS location,
-               COALESCE(fundis.id_document, '') AS id_document,
-               COALESCE(fundis.certificate_document, '') AS certificate_document,
-               COALESCE(fundis.cv_document, '') AS cv_document,
-               COALESCE(fundis.face_verification_status, 'pending') AS face_verification_status
-        FROM users
-        LEFT JOIN fundis ON fundis.user_id = users.id
-        WHERE LOWER(users.role) = 'fundi'
-          AND LOWER(COALESCE(users.status, 'pending')) = 'pending'
-        ORDER BY users.id DESC";
+                             users.fullname,
+                             users.email,
+                             users.phone,
+                             users.status,
+                             COALESCE(fundis.service_category, 'General Service') AS service_category,
+                             COALESCE(fundis.location, 'Not set') AS location,
+                             COALESCE(fundis.id_document, '') AS id_document,
+                             COALESCE(fundis.certificate_document, '') AS certificate_document,
+                             COALESCE(fundis.cv_document, '') AS cv_document,
+                             COALESCE(fundis.face_verification_status, 'pending') AS face_verification_status,
+                             COALESCE(fundis.verification_status, 'pending') AS verification_status
+                FROM users
+                LEFT JOIN fundis ON fundis.user_id = users.id
+                WHERE LOWER(users.role) = 'fundi'
+                    AND LOWER(COALESCE(fundis.verification_status, 'pending')) = 'pending'
+                ORDER BY users.id DESC";
 
 $result = mysqli_query($conn, $sql);
 if (!$result) {
@@ -35,6 +36,11 @@ $messageType = 'error';
 if (isset($_GET['message'])) {
     if ($_GET['message'] === 'missing_documents') {
         $message = 'This fundi cannot be approved until ID, certificate, and CV are uploaded.';
+    } elseif ($_GET['message'] === 'updated') {
+        $messageType = 'success';
+        $message = 'Verification status updated successfully.';
+    } elseif ($_GET['message'] === 'reason_required') {
+        $message = 'Please provide a reason before rejecting a verification request.';
     }
 }
 ?>
@@ -90,16 +96,24 @@ if (isset($_GET['message'])) {
                         <td><?php echo htmlspecialchars((string) $row['service_category']); ?></td>
                         <td><?php echo htmlspecialchars((string) $row['location']); ?></td>
                         <td>
-                            <?php if (!empty($row['id_document'])): ?><div>✓ ID</div><?php endif; ?>
-                            <?php if (!empty($row['certificate_document'])): ?><div>✓ Certificate</div><?php endif; ?>
-                            <?php if (!empty($row['cv_document'])): ?><div>✓ CV</div><?php endif; ?>
-                            <?php if (empty($row['id_document']) || empty($row['certificate_document']) || empty($row['cv_document'])): ?><div>⚠ Missing</div><?php endif; ?>
+                            <div>
+                                ID: <?php if (!empty($row['id_document'])): ?><a href="../<?php echo htmlspecialchars((string) $row['id_document']); ?>" target="_blank" rel="noopener">View</a><?php else: ?>Missing<?php endif; ?>
+                            </div>
+                            <div>
+                                Certificate: <?php if (!empty($row['certificate_document'])): ?><a href="../<?php echo htmlspecialchars((string) $row['certificate_document']); ?>" target="_blank" rel="noopener">View</a><?php else: ?>Missing<?php endif; ?>
+                            </div>
+                            <div>
+                                Police/CV: <?php if (!empty($row['cv_document'])): ?><a href="../<?php echo htmlspecialchars((string) $row['cv_document']); ?>" target="_blank" rel="noopener">View</a><?php else: ?>Missing<?php endif; ?>
+                            </div>
                         </td>
-                        <td><?php echo htmlspecialchars((string) $row['status']); ?></td>
+                        <td><?php echo htmlspecialchars((string) $row['verification_status']); ?></td>
                         <td>
-                            <a class="approve" href="update_user_status.php?id=<?php echo (int) $row['id']; ?>&status=approved&next=view_fundi_requests.php">✅ Accept</a>
-                            |
-                            <a class="reject" href="update_user_status.php?id=<?php echo (int) $row['id']; ?>&status=rejected&next=view_fundi_requests.php">❌ Reject</a>
+                            <form method="POST" action="update_verification_status.php" style="display:grid; gap:8px; min-width:220px;">
+                                <input type="hidden" name="user_id" value="<?php echo (int) $row['id']; ?>">
+                                <button class="approve" type="submit" name="decision" value="verified" style="border:none; background:transparent; cursor:pointer; text-align:left; padding:0;">✅ Accept</button>
+                                <textarea name="admin_comment" placeholder="Reason for rejection (required only if rejecting)"></textarea>
+                                <button class="reject" type="submit" name="decision" value="rejected" style="border:none; background:transparent; cursor:pointer; text-align:left; padding:0;">❌ Reject</button>
+                            </form>
                         </td>
                     </tr>
                 <?php endwhile; ?>
